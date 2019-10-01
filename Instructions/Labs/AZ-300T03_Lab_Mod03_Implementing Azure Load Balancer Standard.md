@@ -1,4 +1,10 @@
-﻿# 高度な仮想ネットワーキングの実装
+﻿---
+lab:
+    title: 'Azure Load Balancer 標準の実装'
+    module: '高度な仮想ネットワーキングの実装'
+---
+
+# 高度な仮想ネットワーキングの実装
 # ラボ: Azure Load Balancer 標準の実装
   
 ### シナリオ

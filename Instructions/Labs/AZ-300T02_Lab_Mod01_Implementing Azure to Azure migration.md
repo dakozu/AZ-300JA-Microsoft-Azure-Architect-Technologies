@@ -1,4 +1,10 @@
-﻿# Azure へのサーバーの移行の評価と実行
+﻿---
+lab:
+    title: 'Azure から Azure への移行の実装'
+    module: 'Azure へのサーバーの移行の評価と実行'
+---
+
+# Azure へのサーバーの移行の評価と実行
 
 # ラボ: Azure から Azure への移行の実装
 
