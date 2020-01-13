@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'メッセージベースの統合アーキテクチャの構成'
-    module: 'クラウド向けの開発'
+    module: 'モジュール 1: 実行時間の長いタスクと分散トランザクションの開発'
 ---
 
 # クラウド向けの開発
@@ -75,27 +75,27 @@ Azure では、このパターンはさまざまな方法により、さまざ�
 
 1. Cloud Shell ペインから次を実行して、このエクササイズで指定するリソースの名前のプレフィックスとして使用される擬似ランダムな文字列を生成します。
 
-   ```sh
-   export PREFIX=$(echo `openssl rand 5 -base64 | cut -c1-7 | tr '[:upper:]''[:lower:]' | tr -cd '[[:alnum:]]._-'`)
-   ```
+```sh
+   export PREFIX=$(echo `openssl rand -base64 5 | cut -c1-7 | tr '[:upper:]' '[:lower:]' | tr -cd '[[:alnum:]]._-'`)
+```
 
-1. Cloud Shellペインから、次を実行して、このラボでリソースをプロビジョニングする Azure リージョンを指定します（プレースホルダー`<Azure region>`をターゲット Azure リージョンの名前に置き換えてください）
+1. Cloud Shellペインから、次を実行して、このラボでリソースをプロビジョニングする Azure リージョンを指定します（プレースホルダー`<Azure region>`をターゲット Azure リージョンの名前に置き換え、リージョン名のスペースを削除します）:
 
-   ```sh
+```sh
    export LOCATION='<Azure_region>'
-   ```
+```
 
 1. Cloud Shell ペインから次を実行して、このラボでプロビジョニングするすべてのリソースをホストするリソースグループを作成します。
 
-   ```sh
+```sh
    export RESOURCE_GROUP_NAME='az300T0602-LabRG'
 
-   az group create --name "${RESOURCE_GROUP_NAME}" --location $LOCATION
-   ```
+   az group create --name "${RESOURCE_GROUP_NAME}" --location "$LOCATION"
+```
 
 1. Cloud Shell ペインから、次を実行して、Azure Storage アカウントと、Azure 機能によって処理される Blob をホストするコンテナーを作成します。
 
-   ```sh
+```sh
    export STORAGE_ACCOUNT_NAME="az300t06st2${PREFIX}"
 
    export CONTAINER_NAME="workitems"
@@ -103,41 +103,41 @@ Azure では、このパターンはさまざまな方法により、さまざ�
    export STORAGE_ACCOUNT=$(az storage account create --name "${STORAGE_ACCOUNT_NAME}" --kind "StorageV2" --location "${LOCATION}" --resource-group "${RESOURCE_GROUP_NAME}" --sku "Standard_LRS")
 
    az storage container create --name "${CONTAINER_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}"
-   ```
+```
 
     > **注意**：同じストレージアカウントは、独自の処理要件を容易にするために Azure 機能でも使用されます。実際のシナリオでは、この目的のために別のストレージアカウントを作成することを検討する必要があります。
 
 1. Cloud Shell ペインから、次を実行して、Azure Storage アカウントの接続文字列 プロパティの値を格納する変数を作成します。
 
-   ```sh
+```sh
    export STORAGE_CONNECTION_STRING=$(az storage account show-connection-string --name "${STORAGE_ACCOUNT_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" -o tsv)
-   ```
+```
 
 1. Cloud Shell ペインから次のコマンドを実行して、Azure Function 処理ブロブの監視をします。そのキーを変数に保存する Application Insights リソースを作成します。
 
-   ```sh
+```sh
    export APPLICATION_INSIGHTS_NAME="az300t06ai${PREFIX}"
 
    az resource create --name "${APPLICATION_INSIGHTS_NAME}" --location "${LOCATION}" --properties '{"Application_Type": "other", "ApplicationId": "function", "Flow_Type": "Redfield"}' --resource-group "${RESOURCE_GROUP_NAME}" --resource-type "Microsoft.Insights/components"
 
    export APPINSIGHTS_KEY=$(az resource show --name "${APPLICATION_INSIGHTS_NAME}" --query "properties.InstrumentationKey" --resource-group "${RESOURCE_GROUP_NAME}" --resource-type "Microsoft.Insights/components" -o tsv)
-   ```
+```
 
 1. Cloud Shell ペインから、次を実行して、Azure Storage Blob の作成に対応するイベントを処理する Azure Function を作成します。
 
-   ```sh
+```sh
    export FUNCTION_NAME="az300t06f${PREFIX}"
 
    az functionapp create --name "${FUNCTION_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" --storage-account "${STORAGE_ACCOUNT_NAME}" --consumption-plan-location "${LOCATION}"
-   ```
+```
 
 1. Cloud Shell ペインから、次を実行して、新しく作成された関数のアプリケーション設定を構成し、それを Application Insights および Azure Storage アカウントにリンクします。
 
-   ```sh
+```sh
    az functionapp config appsettings set --name "${FUNCTION_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" --settings "APPINSIGHTS_INSTRUMENTATIONKEY=$APPINSIGHTS_KEY" FUNCTIONS_EXTENSION_VERSION=~2
 
    az functionapp config appsettings set --name "${FUNCTION_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" --settings "STORAGE_CONNECTION_STRING=$STORAGE_CONNECTION_STRING" FUNCTIONS_EXTENSION_VERSION=~2
-   ```
+```
 
 1. Azure ポータルに切り替えて、このタスクの前半で作成した Azure Function アプリのブレードに移動します。
 
@@ -165,12 +165,12 @@ Azure では、このパターンはさまざまな方法により、さまざ�
 
 1. Azure Function アプリの **Blob Trigger** function ブレードで、run.csx ファイルのコンテンツを確認します。 
 
-   ```csharp
+```csharp
    public static void Run(Stream myBlob, string name, ILogger log)
    {
        log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
    }
-   ```
+```
 
     > **注意**：デフォルトでは、この関数は、新しい Blob の作成に対応するイベントを単純に記録するようにと構成されています。Blob 処理タスクを実行するには、このファイルのコンテンツを変更する必要があります。
 
@@ -181,17 +181,17 @@ Azure では、このパターンはさまざまな方法により、さまざ�
 
 1. Cloud Shell ペインから次を実行して、前のタスクで使用した変数を再入力します。
 
-   ```sh
+```sh
    export RESOURCE_GROUP_NAME='az300T0602-LabRG'
 
    export STORAGE_ACCOUNT_NAME="$(az storage account list --resource-group "${RESOURCE_GROUP_NAME}" --query "[0].name" --output tsv)"
 
    export CONTAINER_NAME="workitems"
-   ```
+```
 
 1. Cloud Shell ペインから次を実行して、このタスクで以前に作成した Azure ストレージアカウントにテスト Blob をアップロードします。
 
-   ```sh
+```sh
    export STORAGE_ACCESS_KEY="$(az storage account keys list --account-name "${STORAGE_ACCOUNT_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" --query "[0].value" --output tsv)"
 
    export WORKITEM='workitem1.txt'
@@ -199,7 +199,7 @@ Azure では、このパターンはさまざまな方法により、さまざ�
    touch "${WORKITEM}"
 
    az storage blob upload --file "${WORKITEM}" --container-name "${CONTAINER_NAME}" --name "${WORKITEM}" --auth-mode key --account-key "${STORAGE_ACCESS_KEY}" --account-name "${STORAGE_ACCOUNT_NAME}"
-   ```
+```
 
 1. Azure ポータルで、前のタスクで作成した Azure Function アプリが表示するブレードに戻ります。
 
@@ -210,7 +210,7 @@ Azure では、このパターンはさまざまな方法により、さまざ�
     > **注意**：このエクササイズの Azure Function アプリは消費計画で実行されるため、 Blob のアップロードとトリガーされる関数の間に最大数分の遅延が生じる場合があります。App Service（Consumption ではなく）プランを使用して Function アプリを実装することにより、待ち時間を最小限に抑えることができます。
 
 
-1. **詳細を呼び出し** ブレードで、**Application Insightsで実行** リンクをクリックします。
+1. **モニター** ブレードに戻り、[**Application Insightsで実行**] リンクをクリックします。
 
 1. Application Insights ポータルで、自動生成された Kusto クエリとその結果を確認します。
 
@@ -230,13 +230,13 @@ Azure では、このパターンはさまざまな方法により、さまざ�
 
 1. Cloud Shell ペインから次を実行して、このエクササイズで指定するリソースの名前のプレフィックスとして使用される擬似ランダムな文字列を生成します。
 
-   ```sh
-   export PREFIX=$(echo `openssl rand 5 -base64 | cut -c1-7 | tr '[:upper:]''[:lower:]' | tr -cd '[[:alnum:]]._-'`)
-   ```
+```sh
+   export PREFIX=$(echo `openssl rand -base64 5 | cut -c1-7 | tr '[:upper:]' '[:lower:]' | tr -cd '[[:alnum:]]._-'`)
+```
 
 1. Cloud Shell ペインから次を実行して、ターゲットリソースグループとその既存のリソースをホストしている Azure リージョンを特定します。 
 
-   ```sh
+```sh
    export RESOURCE_GROUP_NAME_EXISTING='az300T0602-LabRG'
 
    export LOCATION=$(az group list --query "[?name == '${RESOURCE_GROUP_NAME_EXISTING}'].location" --output tsv)
@@ -244,11 +244,11 @@ Azure では、このパターンはさまざまな方法により、さまざ�
    export RESOURCE_GROUP_NAME='az300T0603-LabRG'
 
    az group create --name "${RESOURCE_GROUP_NAME}" --location $LOCATION
-   ```
+```
 
 1. Cloud Shell ペインから次を実行して、このタスクで構成する Event Grid サブスクリプションで使用される Azure ストレージアカウントとそのコンテナーを作成します。
 
-   ```sh
+```sh
    export STORAGE_ACCOUNT_NAME="az300t06st3${PREFIX}"
 
    export CONTAINER_NAME="workitems"
@@ -256,36 +256,36 @@ Azure では、このパターンはさまざまな方法により、さまざ�
    export STORAGE_ACCOUNT=$(az storage account create --name "${STORAGE_ACCOUNT_NAME}" --kind "StorageV2" --location "${LOCATION}" --resource-group "${RESOURCE_GROUP_NAME}" --sku "Standard_LRS")
 
    az storage container create --name "${CONTAINER_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}"
-   ```
+```
 
 1. Cloud Shell ペインから、次を実行して、Azure Storage アカウントの Resource Id プロパティの値を格納する変数を作成します。
 
-   ```sh
+```sh
    export STORAGE_ACCOUNT_ID=$(az storage account show --name "${STORAGE_ACCOUNT_NAME}" --query "id" --resource-group "${RESOURCE_GROUP_NAME}" -o tsv)
-   ```
+```
 
 1. Cloud Shell ペインから次を実行して、このタスクで構成する Event Grid サブスクリプションによって生成されたメッセージを保存するストレージアカウントキューを作成します。
 
-   ```sh
+```sh
    export QUEUE_NAME="az300t06q3${PREFIX}"
 
    az storage queue create --name "${QUEUE_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}"
-   ```
+```
 
 1. Cloud Shell ペインから、次を実行して、Azure Storage アカウントの指定されたコンテナーへの Blob アップロードに応じて Azure Storage キューでメッセージの生成を促進する Event Grid サブスクリプションを作成します。
 
-   ```sh
+```sh
    export QUEUE_SUBSCRIPTION_NAME="az300t06qsub3${PREFIX}"
 
    az eventgrid event-subscription create --name "${QUEUE_SUBSCRIPTION_NAME}" --included-event-types 'Microsoft.Storage.BlobCreated' --endpoint "${STORAGE_ACCOUNT_ID}/queueservices/default/queues/${QUEUE_NAME}" --endpoint-type "storagequeue" --source-resource-id "${STORAGE_ACCOUNT_ID}"
-   ```
+```
 
 
 #### タスク 2：Azure Event Grid サブスクリプションベースのキューメッセージングを検証 
 
 1. Cloud Shell ペインから次を実行して、このタスクで以前に作成した Azure ストレージアカウントにテスト Blob をアップロードします。
 
-   ```sh
+```sh
    export AZURE_STORAGE_ACCESS_KEY="$(az storage account keys list --account-name "${STORAGE_ACCOUNT_NAME}" --resource-group "${RESOURCE_GROUP_NAME}" --query "[0].value" --output tsv)"
 
    export WORKITEM='workitem2.txt'
@@ -293,7 +293,7 @@ Azure では、このパターンはさまざまな方法により、さまざ�
    touch "${WORKITEM}"
 
    az storage blob upload --file "${WORKITEM}" --container-name "${CONTAINER_NAME}" --name "${WORKITEM}" --auth-mode key --account-key "${AZURE_STORAGE_ACCESS_KEY}" --account-name "${STORAGE_ACCOUNT_NAME}"
-   ```
+```
 1. Azure ポータルで、このエクササイズの前のタスクで作成した Azure ストレージアカウントが表示されているブレードに移動します。 
 
 1. Azure ストレージアカウントのブレードで、**キュー** をクリックして、キューのリストを表示します。 
@@ -307,16 +307,28 @@ Azure では、このパターンはさまざまな方法により、さまざ�
 
 ## エクササイズ3：ラボリソースを削除
 
-このエクササイズの主なタスクは次のとおりです。
+#### タスク1：Cloud Shell を開きます
 
-1. ラボリソースを削除 
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして、Cloud Shell ペインを開きます。
 
-#### タスク1：ラボリソースを削除 
+1. 必要に応じて、Cloud Shell ペインの左上隅にあるドロップ ダウン リストを使用して、Bash シェル セッションに切り替えます。
 
-1. Azure ポータルで、 Cloud Shell で Bash セッションを開始します。
+1. **「Cloud Shell」** コマンドプロンプトで、次のコマンドを入力し、**「Enter」** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
 
-1. Cloud Shell ペインから次を実行して、このラボでプロビジョニングしたすべてのリソースをホストするリソースグループを削除します
+```
+   az group list --query "[?starts_with(name,'az300T06')]".name --output tsv
+```
 
-   ```sh
-for RESOURCE_GROUP_NAME in 'az300T0602-LabRG' 'az300T0603-LabRG' ; do     az group delete --name "${RESOURCE_GROUP_NAME}" --no-wait --yes; done
-   ```
+1. 出力に、この実習ラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
+
+#### タスク2：リソース グループの削除
+
+1. **「Cloud Shell」** コマンド プロンプトで、次のコマンドを入力し、 **「Enter」** キーを押してこの実習ラボで作成したリソース グループを削除します。
+
+```sh
+   az group list --query "[?starts_with(name,'az300T06')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
+
+1. ポータルの下部にある **「Cloud Shell」** プロンプトを閉じます。
+
+> **結果**: このエクササイズでは、このラボで使用するリソースを削除しました。

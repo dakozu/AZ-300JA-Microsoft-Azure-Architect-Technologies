@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'Azure Storage アクセス制御の実装'
-    module: 'ストレージの実装と管理'
+    module: 'モジュール 1: コンピューティングおよびストレージ ソリューションの選択'
 ---
 
 # ストレージの実装と管理
@@ -164,33 +164,33 @@ lab:
 
 1. Cloud Shell パネルから、次の操作を実行し、このエクササイズの最初のエクササイズで作成したストレージ アカ保存します。
 
-   ```pwsh
+```pwsh
    $storageAccount = (Get-AzStorageAccount -ResourceGroupName az3000201-LabRG)[0]
-   ```
+```
 
 1. Cloud Shell パネルから、次の操作を実行して、ストレージ アカウントに完全な制御を許可するセキュリティ コンテキストを実行します。
 
-   ```pwsh
+```pwsh
    $keyContext = $storageAccount.Context
-   ```
+```
 
 1. Cloud Shell パネル、前のタスクで作成したアクセス ポリシーに基づいて BLOB 固有の SAS トークンを作成するには、次の操作を実行します。
 
-   ```pwsh
+```pwsh
    $sasToken = New-AzStorageBlobSASToken -Container 'labcontainer' -Blob 'splashscreen.contrast-white_scale-400.png' -Policy labcontainer-read -Context $keyContext
-   ```
+```
 
 1. Cloud Shell パネルから、新しく作成された SAS トークンに基づいてセキュリティ コンテキストを確立するには、次の操作を実行します。 
 
-   ```pwsh
+```pwsh
    $sasContext = New-AzStorageContext $storageAccount.StorageAccountName -SasToken $sasToken
-   ```
+```
 
 1. Cloud Shell パネルから、次の操作を実行して、BLOB のプロパティを取得します。 
 
-   ```pwsh
+```pwsh
    Get-AzStorageBlob -Container 'labcontainer' -Blob 'splashscreen.contrast-white_scale-400.png' -Context $sasContext
-   ```
+```
 
 1. BLOB に正常にアクセスしたことを確認します。
 
@@ -207,11 +207,39 @@ lab:
 
 1. Cloud Shell パネルから、次の操作を再実行して、BLOB のプロパティの取得を試みます。 
 
-   ```pwsh
+```pwsh
    Get-AzStorageBlob -Container 'labcontainer' -Blob 'splashscreen.contrast-white_scale-400.png' -Context $sasContext
-   ```
+```
 
 1. もうこれ以上BLOB にアクセスできないを確認します。
 
 
 > **結果**: このエクササイズを完了したら、BLOB コンテナーを作成し、そのコンテナーにファイルをアップロードし、SAS トークンと格納されたアクセス ポリシーを使用することでアクセス制御をテストしました。
+
+## 演習 3: ラボリソースを削除
+
+#### タスク 1：Cloud Shell を開く
+
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして、Cloud Shell ペインを開きます。
+
+1. 必要に応じて、Cloud Shell ペインの左上隅にあるドロップ ダウン リストを使用して、Bash シェル セッションに切り替えます。
+
+1. **「Cloud Shell」** コマンドプロンプトで、次のコマンドを入力し、**「Enter」** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+
+```
+   az group list --query "[?starts_with(name,'az30002')]".name --output tsv
+```
+
+1. 出力に、この実習ラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
+
+#### タスク 2: リソース グループの削除
+
+1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押してこのラボで作成したリソース グループを削除します:
+
+```sh
+   az group list --query "[?starts_with(name,'az30002')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
+
+1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。
+
+> **結果**: このエクササイズでは、このラボで使用するリソースを削除しました。

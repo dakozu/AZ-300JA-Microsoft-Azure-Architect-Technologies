@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'Azure リソースのユーザー割り当て管理 ID　の実装'
-    module: 'マネージド ID'
+    module: 'モジュール 5: マネージド ID'
 ---
 
 # マネージド ID
@@ -10,7 +10,7 @@ lab:
 
 ### シナリオ
 
-アダタムコーポレーションは、管理　ID　を使用して Azure VM で実行されているアプリケーションを認証したいと考えています。
+アダタムコーポレーションは、マネージド ID を使用して Azure VM で実行されているアプリケーションを認証したいと考えています。
 
 ### 目的
 
@@ -60,9 +60,9 @@ lab:
 
 1. Cloud Shell　ペインから、リソース グループを作成するためには、(`<Azure region>`プレースホルダを、サブスクリプションに使用でき、ラボの場所に最も近い　Azure リージョンの名前に置き換えます)を実行します。
 
-   ```
+```
    az group create --resource-group az3000501-LabRG --location <Azure region>
-   ```
+```
 
 1. Cloud Shell　ペインから、Azure リソース マネージャー テンプレート **\\allfile\\AZ-300T01\\Module_05\\azuredeploy05.json** を主目次にアップロードします。
 
@@ -70,9 +70,9 @@ lab:
 
 1. Cloud Shell　ペインから、下記を実行して、Windows Server 2016 データセンターをホストする Azure VM　を最初の仮想ネットワークにデプロイします：
 
-   ```
+```
    az group deployment create --resource-group az3000501-LabRG --template-file azuredeploy05.json --parameters @azuredeploy05.parameters.json
-   ```
+```
 
    > **注意**：デプロイメントが完了するのを待ってください。これにはおよそ　5　分かかる場合があります。
 
@@ -80,23 +80,23 @@ lab:
 
 1. Cloud Shell　ペインから、次の操作を実行して、ユーザーが割り当てた管理 ID を作成します：
 
-   ```
+```
    az identity create --resource-group az3000501-LabRG --name az3000501-mi
-   ```
+```
 
 1. Cloud Shell　ペインから、次の操作を実行して、ユーザーが割り当てた管理　ID を Azure VM に割り当てます：
 
-   ```
+```
    az vm identity assign --resource-group az3000501-LabRG --name az3000501-vm --identities az3000501-mi
-   ```
+```
 
 #### タスク 3：ユーザーが割り当てた管理 ID　を参照する　RBAC　を構成します。
 
 1. Cloud Shell　ペインから、下記を実行して、リソース グループを作成します (このエクササイズで Azure VM をデプロイした Azure リージョンの名前に`<Azure region>`プレースホルダを置き換えます)。
 
-   ```
+```
    az group create --resource-group az3000502-LabRG --location <Azure region>
-   ```
+```
 
 1. Azure portal　で、**az3000502-LabRG - アクセス制御 (IAM)** ブレードに移動します。
 
@@ -126,65 +126,71 @@ lab:
 
 1. PowerShell　プロンプトから、次の操作を実行して、PowerShellGet モジュールの最新バージョンをインストールします (確認のプロンプトをしたら Enter キーを押します)。
 
-   ```pwsh
+```pwsh
    Install-Module -Name PowerShellGet -Force
-   ```
+```
 
 1. PowerShell　プロンプトから、次の操作を実行して、Az モジュールの最新バージョンをインストールします (**Y** を入力し、確認のプロンプトをしたら、Enter キーを押します)。
 
-   ```pwsh
+```pwsh
    Install-Module -Name Az -AllowClobber
-   ```
+```
 
 1. `exit`　を入力し、Enter キーを押し、現在のPowerShell　セッションを終了します；コマンド プロンプトに　`PowerShell`　を入力して、Enter キーを押して、もう一度開始します。
 
-1. PowerShell　プロンプトから、次の操作を実行して、PowerShellGet モジュールのプレリリース バージョンをインストールします：
+1. PowerShell　プロンプトから、次の操作を実行して、AzureRM.ManagedServiceIdentity モジュールをインストールします：
 
-   ```pwsh
-   Install-Module -Name PowerShellGet -AllowPrerelease
-   ```
-
-1. PowerShell　プロンプトから、次の操作を実行して、AzureRM.ManagedServiceIdentity モジュールのプレリリース バージョンをインストールします：
-
-   ```pwsh
-   Install-Module -Name Az.ManagedServiceIdentity -AllowPrerelease
-   ```
+```pwsh
+   Install-Module -Name Az.ManagedServiceIdentity
+```
 
 #### タスク 2：Azure VM からユーザーが割り当てた管理　ID　の機能を検証します。
 
 1. PowerShell　プロンプトから、次の操作を実行して、ユーザーが割り当てた管理　ID としてサインインします：
 
-   ```pwsh
+```pwsh
    Add-AzAccount -Identity
-   ```
+```
 
 1. PowerShell　プロンプトから、次の操作を実行して、現在使用されている管理　ID　の取得を試みます。
 
-   ```pwsh
+```pwsh
    (Get-AzVM -ResourceGroupName az3000501-LabRG -Name az3000501-vm).Identity
-   ```
+```
 
 1. エラー メッセージを注意します。メッセージが述べているように、現在のセキュリティ コンテキストは、ターゲット リソースに十分な承認を与えません。この問題を解決するには、Azure portal　に切り替 えて、**az3000501-LabRG - アクセス制御 (IAM)** ブレードに移動します。
 
-1. **az3000501-LabRG - アクセス制御 (IAM)** ブレードから、ユーザーが割り当てた管理 ID **az3000501-mi** にリーダー ロールを割り当てます。
+1. **az3000501-LabRG - Access Control (IAM)** ブレードから、ユーザーが割り当てた管理 ID **az3000501-mi**に共同作成者ロールを割り当てます。
 
 1. リモート デスクトップ セッションに戻り、PowerShell　プロンプトから次の操作を実行して、現在使用されている管理　ID　の取得を試みます：
 
-   ```pwsh
+```pwsh
    (Get-AzVM -ResourceGroupName az3000501-LabRG -Name az3000501-vm).Identity
-   ```
+```
 
+   > **注記**: PowerShell プロンプトから、権限が不十分であることを示すエラー メッセージを受け取った場合は、次を実行します
+   
+```pwsh
+   Remove-AzAccount
+```
+   
+後続：
+   
+```pwsh
+   Add-AzAccount -Identity
+```
+      
 1. PowerShell　プロンプトから、次の操作を実行して、変数に場所を保存します：
 
-   ```pwsh
+```pwsh
    $location = (Get-AzResourceGroup -Name az3000502-LabRG).Location
-   ```
+```
 
 1. PowerShell　プロンプトから、次の操作を実行して、パブリック IP アドレス リソースを作成します：
 
-   ```pwsh
+```pwsh
    New-AzPublicIpAddress -Name az3000502-pip -ResourceGroupName az3000502-LabRG -AllocationMethod Dynamic -Location $location
-   ```
+```
 
 1. コマンドが成功に完了したことを確認します。
 
@@ -198,9 +204,9 @@ lab:
 
 1. **Cloud Shell** コマンド プロンプトに下記のコマンドを入力し、**Enter** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します：
 
-   ```
-   az group list --query "[?starts_with(name,'az30005')]".name --output tsv
-   ```
+```
+   az group list --query "[?starts_with(name,'az30005')].name" --output tsv
+```
 
 1. 出力に、このラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
 
@@ -208,9 +214,9 @@ lab:
 
 1. **Cloud Shell** コマンド プロンプトに下記のコマンドを入力し、**Enter** キーを押してこのラボで作成したリソース グループを削除します。
 
-   ```sh
-   az group list --query "[?starts_with(name,'az30005')]".name --output tsv | xargs -L1 bash -c ‘az group delete --name $0 --no-wait --yes'
-   ```
+```sh
+   az group list --query "[?starts_with(name,'az30005')].name" --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
 
 1. Portal　の下部にある **Cloud Shell** プロンプトを閉じます。
 

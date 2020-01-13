@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'カスタム ロール ベースのアクセス制御 (RBAC) ロールの実装'
-    module: 'ID のセキュリティ保護'
+    module: 'モジュール 4: 認証の実装'
 ---
 
 # ID のセキュリティ保護
@@ -60,9 +60,9 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
 1. Cloud Shell パネルから、実行してリソース グループを作成します (`<Azure region>`プレースホルダを、サブスクリプションで使用でき、ラボの場所に最も近い Azure リージョンの名前に置き換えます)。
 
-   ```pwsh
+```pwsh
    New-AzResourceGroup -Name az3000901-LabRG -Location <Azure region>
-   ```
+```
 
 1. Cloud Shell ウィンドウから、Azure Resource Manager テンプレート **\\allfile\\AZ-300T03\\Module_04\\azuredeploy09.json** をホーム ディレクトリにアップロードします。
 
@@ -70,9 +70,9 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
 1. Cloud Shell パネルから、次の実行によって Ubuntu をホストする Azure VM をデプロイします。
 
-   ```pwsh
+```pwsh
    New-AzResourceGroupDeployment -ResourceGroupName az3000901-LabRG -TemplateFile $home/azuredeploy09.json -TemplateParameterFile $home/azuredeploy09.parameters.json
-   ```
+```
 
     > **注意**：デプロイが完了するのを待たずに、次のタスクに進みます。 
 
@@ -102,7 +102,7 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
 1. ラボ コンピュータで ファイル **\\allfiles\\AZ-300T03\\Module_04\\customRoleDefinition09.json** を開き、その内容を確認します。
 
-   ```json
+```json
    {
       "Name": "Virtual Machine Operator (Custom)",
       "Id": null,
@@ -119,7 +119,7 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
           "/subscriptions/SUBSCRIPTION_ID"
       ]
    }
-   ```
+```
 
 1. Azure portal で、Microsoft Edge ウィンドウで、 **Cloud Shell** 内で **PowerShell** セッションを開始します。 
 
@@ -127,22 +127,22 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
 1. Cloud Shell ウィンドウ から、**$SUBSCRIPTION\_ID** プレースホルダを Azure サブスクリプションの ID 値に置き換えるには、次の手順を実行します。
 
-   ```pwsh
+```pwsh
    $subscription_id = (Get-AzContext).Subscription.id
    (Get-Content -Path $HOME/customRoleDefinition09.json) -Replace 'SUBSCRIPTION_ID', "$subscription_id" | Set-Content -Path $HOME/customRoleDefinition09.json
-   ```
+```
  
 1. Cloud Shell ウィンドウから、次の操作を実行して、カスタム ロール定義を作成します。
 
-   ```pwsh
+```pwsh
    New-AzRoleDefinition -InputFile $HOME/customRoleDefinition09.json
-   ```
+```
 
 1. Cloud Shell ウィンドウから、次の操作を実行して、ロールが正常に作成されたことを確認します。
 
-   ```pwsh
+```pwsh
    Get-AzRoleDefinition -Name 'Virtual Machine Operator (Custom)'
-   ```
+```
 
 1. Cloud Shell パネルを閉じます。
 
@@ -167,24 +167,24 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
 1. Cloud Shell ウィンドウから、次の操作を実行して、Azure AD DNS ドメイン名を識別します。
 
-   ```pwsh
+```pwsh
    $domainName = ((Get-AzureAdTenantDetail).VerifiedDomains)[0].Name
-   ```
+```
 
 1. Cloud Shell ウィンドウから、次の操作を実行して、新しい Azure AD ユーザーを作成します。
 
-   ```pwsh
+```pwsh
    $passwordProfile = New-Object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
    $passwordProfile.Password = 'Pa55w.rd1234'
    $passwordProfile.ForceChangePasswordNextLogin = $false
    New-AzureADUser -AccountEnabled $true -DisplayName 'lab user0901' -PasswordProfile $passwordProfile -MailNickName 'labuser0901' -UserPrincipalName "labuser0901@$domainName"
-   ```
+```
 
 1. Cloud Shell ウィンドウから、次の操作を実行して、新しく作成された Azure AD ユーザーのユーザー プリンシパル名を識別します。
 
-   ```pwsh
+```pwsh
    (Get-AzureADUser -Filter "MailNickName eq 'labuser0901'").UserPrincipalName
-   ```
+```
 
 1. Cloud Shell パネルを閉じます。
 
@@ -201,7 +201,7 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 
     - ロール：**仮想マシンオペレータ (カスタム)**
 
-    - アクセス権を割り当てる: **Azure AD ユーザー、グループ、またはアプリケーション**
+    - アクセス権を割り当てる: **Azure AD ユーザー、グループ、またはサービス プリンシパル**
 
     - 選択: **ラボ user0901**
 
@@ -223,3 +223,31 @@ Adatum Corporation は、Azure VM の開始と停止 (割り当て解除) にア
 1. 仮想マシンを停止し、アクションが正常に完了したことを確認します。
 
 > **結果**: このエクササイズを完了したら、カスタム RBAC ロールを割り当て、テストしました。
+
+## 演習 3: ラボリソースを削除
+
+#### タスク 1：Cloud Shell を開く
+
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして、Cloud Shell ペインを開きます。
+
+1. 必要に応じて、Cloud Shell ペインの左上隅にあるドロップ ダウン リストを使用して、Bash シェル セッションに切り替えます。
+
+1. **「Cloud Shell」** コマンドプロンプトで、次のコマンドを入力し、**「Enter」** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+
+```
+   az group list --query "[?starts_with(name,'az30009')]".name --output tsv
+```
+
+1. 出力に、この実習ラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
+
+#### タスク 2: リソース グループの削除
+
+1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押してこのラボで作成したリソース グループを削除します:
+
+```sh
+   az group list --query "[?starts_with(name,'az30009')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
+
+1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。
+
+> **結果**: このエクササイズでは、このラボで使用するリソースを削除しました。

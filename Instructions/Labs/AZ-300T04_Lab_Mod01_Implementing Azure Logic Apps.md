@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'Azure ロジック・アプリを実装'
-    module: 'アプリケーション サービスの実装と管理'
+    module: 'モジュール 1: Azure App Service Web Apps の作成'
 ---
 
 # アプリケーション サービスの実装と管理
@@ -87,7 +87,7 @@ lab:
 
     - Log Analytics: **Off**
 
-1. ボールトがプロビジョニングされるまで待ちます。これにはおよそ １ 分間かかります。 
+1. アプリがプロビジョニングされるまで待ちます。これにはおよそ １ 分間かかります。 
 
 
 #### タスク 3: Azure AD サービス原則の作成 
@@ -120,7 +120,7 @@ $aadApp30007 = New-AzADApplication -DisplayName 'aadApp30007' -HomePage 'http://
 New-AzADServicePrincipal -ApplicationId $aadApp30007.ApplicationId.Guid
 ```
 
-1. **New-AzureRmADServicePrincipal** コマンドの出力に、**ApplicationId** プロパティの値をメモ します。このエクササイズには、次の操作が必要になります。
+1. **New-AzADServicePrincipal** コマンドの出力に、**ApplicationId** プロパティの値をメモ します。このエクササイズには、次の操作が必要になります。
 
 1. Cloud Shell ペインから、次の操作を実行して、 現在の Azure サブスクリプションの **Id** プロパティの値と、 そのサブスクリプションに関連付けられている Azure AD テナントの **TenantId** プロパティの値を識別します(このラボの次のエクササイズにも必要になります):
 
@@ -241,7 +241,7 @@ Register-AzResourceProvider -ProviderNamespace Microsoft.EventGrid
 
 1. Azure portal に **az3000701-LabRG** リソース グループに移動し、垂直メニューに **イベント** をクリックします。
 
-1. **az3000701-LabRG - イベント** ブレードに、**Web フック** をクリックします。
+1. **az3000701-LabRG - Events** ブレードで、 **Getting Started** を選択し、 **Web Hook** をクリックします。
 
 1. **イベント サブスクリプションの作成** ブレードで、**イベントの種類にフィルター** の ドロップ ダウン リストで、 **リソース書き込みサクセス** と **リソース削除サクセス** の隣にあるチェックボックスのみが 選択されていることを確保します。
 
@@ -262,10 +262,39 @@ Register-AzResourceProvider -ProviderNamespace Microsoft.EventGrid
 
 1. ストレージ アカウント ブレードに、垂直メニューで **構成** をクリックします。
 
-1. 構成ブレードに、**セキュア転送必須** 設定を **無効** に設定します。
+1. 構成ブレードに、**セキュア転送必須** 設定を **無効**に設定し、**保存**をクリックします。
 
 1. **logicapp3000701** ブレードに移動し、**更新** をクリックし、**実行履歴** には Azure ストレージ アカウントの構成変更に対応するエントリが含まれていることに注意してください。
 
 1. このエクササイズに構成したメール アカウントの受信トレイに移動し、ロジック アプリによって生成されたメールが含まれていることを確認します。
 
 > **結果**: このエクササイズを完了したら、リソース グループの変更を監視する Azure ロジック アプリを構成しました。
+
+
+## 演習 3: ラボリソースを削除
+
+#### タスク 1：Cloud Shell を開く
+
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして、Cloud Shell ペインを開きます。
+
+1. 必要に応じて、Cloud Shell ペインの左上隅にあるドロップ ダウン リストを使用して、Bash シェル セッションに切り替えます。
+
+1. **「Cloud Shell」** コマンドプロンプトで、次のコマンドを入力し、**「Enter」** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+
+```
+   az group list --query "[?starts_with(name,'az30007')]".name --output tsv
+```
+
+1. 出力に、この実習ラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
+
+#### タスク 2: リソース グループの削除
+
+1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押してこのラボで作成したリソース グループを削除します:
+
+```sh
+   az group list --query "[?starts_with(name,'az30007')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
+
+1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。
+
+> **結果**: このエクササイズでは、このラボで使用するリソースを削除しました。

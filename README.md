@@ -1,10 +1,4 @@
-﻿# AZ-300: Microsoft Azure アーキテクチャ テクノロジ
-
-- **[最新の学習ハンドブックと AllFiles コンテンツをダウンロード](../../releases/latest)**
-- **あなたはMCTですか?** -  [MCT 向けの GitHub ユーザーガイド](https://microsoftlearning.github.io/MCT-User-Guide-JA/)をご覧ください。
-- **ラボの手順を手動で行いますか?** - 手順は、 [Microsoft ラーニング/Docker ビルド](https://github.com/MicrosoftLearning/Docker-Build)リポジトリで入手できます。
-
-## 我々は何をしていますか?
+﻿**我々は何をしていますか?**
 
 *	コース作成者と MCT の間の対話を可能にするために、GitHub でラボの手順とラボ ファイルを公開しています。Azure プラットフォームの変更に関して、コンテンツを最新の状態に保つことに役立つことを願っています。
 

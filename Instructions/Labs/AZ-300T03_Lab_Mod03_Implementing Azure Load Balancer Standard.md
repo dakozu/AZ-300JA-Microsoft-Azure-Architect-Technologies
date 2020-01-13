@@ -1,7 +1,7 @@
 ﻿---
 lab:
     title: 'Azure Load Balancer 標準の実装'
-    module: '高度な仮想ネットワーキングの実装'
+    module: 'モジュール 3: データ アクセスのスループットと構造を測定します'
 ---
 
 # 高度な仮想ネットワーキングの実装
@@ -64,9 +64,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. Cloud Shell パネルから、実行してリソース グループを作成します (`<Azure region>`プレースホルダを、サブスクリプションで使用でき、ラボの場所に最も近い Azure リージョンの名前に置き換えます)。
 
-   ```
+```
    az group create --name az3000801-LabRG --location <Azure region>
-   ```
+```
 
 1. From the Cloud Shell pane, upload the Azure Resource Manager template **\\allfiles\\AZ-300T03\\Module_03\\azuredeploy0801.json** into the home directory.
 
@@ -74,9 +74,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. Cloud Shell パネルから、次の方法で Windows Server 2016 データセンターをホストする Azure VM のペアをデプロイします。
 
-   ```
+```
    az group deployment create --resource-group az3000801-LabRG --template-file azuredeploy0801.json --parameters @azuredeploy0801.parameters.json
-   ```
+```
 
     > **注意**：次のタスクに進む前に、デプロイを待ちます。これにはおよそ10 分かかる場合があります。
 
@@ -246,9 +246,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. ラボ コンピュータで **スタート** を右クリックし、**実行** を クリック し、**開く** テキスト ボックスから次の実行を実行します(このタスクで前述のパブリック `<IP アド>`レスでプレースホルダを置き換えます)。
 
-   ```
+```
    mstsc /v:<IP address>:33890
-   ```
+```
 
 1. プロンプトが表示された場合は、次の値を指定して認証します：
 
@@ -260,9 +260,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. ラボ コンピュータに切り替え、**スタート** を右クリックし、**実行** を クリック し、**開く** テキスト ボックスから次の実行を実行します(このタスクで前に指定した `<IP アド>`レスでプレースホルダを置き換えます)。
 
-   ```
+```
    mstsc /v:<IP address>:33891
-   ```
+```
 
 1. プロンプトが表示された場合は、次の値を指定して認証します：
 
@@ -274,9 +274,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. リモート デスクトップ セッション内で、Windows PowerShell セッションを開始し、次の操作を実行して、現在のパブリック IP アドレスを確認します。
 
-   ```pwsh
+```pwsh
    Invoke-RestMethod http://ipinfo.io/json 
-   ```
+```
 
 1. コマンドレットの出力を確認し、IP アドレスエントリがこのタスクで前に指定したパブリック IP アドレスと一致していることを確認します。
 
@@ -310,9 +310,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. Cloud Shell パネルから、次の方法で Windows Server 2016 データセンターをホストする Azure VM のペアをデプロイします。
 
-   ```
+```
    az group deployment create --resource-group az3000801-LabRG --template-file azuredeploy0802.json --parameters @azuredeploy0802.parameters.json
-   ```
+```
 
     > **注意**: 次のタスクに進む前に、デプロイを待ちます。これにはおよそ5 分かかる場合があります。
 
@@ -325,22 +325,22 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. Azure Portal では、Cloud Shell パネルから次の操作を実行し、ロード バランサーの送信パブリック IP アドレスを作成します。
 
-   ```
+```
    az network public-ip create --resource-group az3000801-LabRG --name az3000802-lb-pip01 --sku standard
-   ```
+```
 
 1. Azure portal で、Cloud Shell パネルから、次の操作を実行して、Azure Load Balancer 標準を作成します。
 
-   ```sh
+```sh
    LOCATION=$(az group show --name az3000801-LabRG --query location --out tsv)
    az network lb create --resource-group az3000801-LabRG --name az3000802-lb --sku standard --backend-pool-name az3000802-bepool --frontend-ip-name loadBalancedFrontEndOutbound --location $LOCATION --public-ip-address az3000802-lb-pip01
-   ```
+```
 
 1. Cloud Shell パネルから、次の操作を実行して、送信規則を作成します。
 
-   ```
+```
    az network lb outbound-rule create --resource-group az3000801-LabRG --lb-name az3000802-lb --name outboundRuleaz30000802 --frontend-ip-configs loadBalancedFrontEndOutbound --protocol All --idle-timeout 15 --outbound-ports 10000 --address-pool az3000802-bepool
-   ```
+```
 
     > **注意**: 操作が完了するまでお待ちください。これは 1 分以上かからないようにしてください。
 
@@ -369,9 +369,9 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. ラボ コンピュータで、リモート デスクトップ セッションから **az3000801-vm0** まで、次の操作を実行し、**az3000802-vm0** にリモート デスクトップ セッションを開始します。
 
-   ```
+```
    mstsc /v:az3000802-vm0
-   ```
+```
 
 1. プロンプトが表示された場合は、次の値を指定して認証します：
 
@@ -381,11 +381,39 @@ Adatum コーポレーションは、Azure VM の受信トラフィックと送�
 
 1. **az3000802-vm0** へのリモート デスクトップ セッション内で、Windows PowerShell セッションを開始し、次の操作を実行して、現在のパブリック IP アドレスを確認します。
 
-   ```pwsh
+```pwsh
    Invoke-RestMethod http://ipinfo.io/json 
-   ```
+```
 
 1. コマンドレットの出力を確認し、IP アドレスエントリがこのタスクで前に指定したパブリック IP アドレスと一致していることを確認します。
 
 
 > **結果**: このエクササイズを完了したら、Azure Load Balancer 標準の送信ルールを構成およびテストしました。 
+
+## 演習 3: ラボリソースを削除
+
+#### タスク 1：Cloud Shell を開く
+
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして、Cloud Shell ペインを開きます。
+
+1. 必要に応じて、Cloud Shell ペインの左上隅にあるドロップ ダウン リストを使用して、Bash シェル セッションに切り替えます。
+
+1. **「Cloud Shell」** コマンドプロンプトで、次のコマンドを入力し、**「Enter」** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+
+```
+   az group list --query "[?starts_with(name,'az30008')]".name --output tsv
+```
+
+1. 出力に、この実習ラボで作成したリソース グループのみが含まれていることを確認します。これらのグループは、次のタスクで削除されます。
+
+#### タスク 2: リソース グループの削除
+
+1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押してこのラボで作成したリソース グループを削除します:
+
+```sh
+   az group list --query "[?starts_with(name,'az30008')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+```
+
+1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。
+
+> **結果**: このエクササイズでは、このラボで使用するリソースを削除しました。
