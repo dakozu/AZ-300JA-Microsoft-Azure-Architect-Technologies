@@ -101,56 +101,58 @@ lab:
 
 1. ストレージ アカウントのブレードで次の設定で新しい blob コンテナーを作成してください：
 
-    - 名前: **ラボコンテナー**
+    - 名前: **labcontainer**
 
     - アクセスの種類: **プライベート**
 
 
 #### タスク 2: Azure Portal を使用してコンテナーにデータをアップロードする
   
-1. Azure Portal で、**ラボコンテナ** ブレードに移動します。
+1. Azure Portal で、**labcontainer** ブレードに移動します。
 
-1. **ラボコンテナー** ブレードから、ファイルをアップロードします。**C:\\Windows\\ImmersiveControlPanel\\images\\splashscreen.contrast-white_scale-400.png**。  
+1. **labcontainer** ブレードから、ファイルをアップロードします。**C:\\Windows\\ImmersiveControlPanel\\images\\splashscreen.contrast-white_scale-400.png**。  
 
 
 #### タスク 3: SAS トークンを使用することで Azure Storage アカウントのコンテンツにアクセスする
   
-1. **ラボコンテナ** ブレードから、新しくアップロードされた BLOB の URL を識別します。 
+1. **labcontainer** ブレードから、新しくアップロードされた BLOB の URL を確認します。 
 
-1. Microsoft Edge を起動し、その URL に移動します。
+1. 新しいMicrosoft Edge を起動し、その URL に移動します。
 
-1. **ResourceNotFound** エラー メッセージに注意してください。これは、BLOB 認証アクセスが必要なプライベート コンテナーに存在すると期待されるためです。 
+1. **ResourceNotFound** エラー メッセージが表示されることを確認してください。これは、認証アクセスが必要なプライベート コンテナーに Blob が存在するため期待された動作です。 
 
-1. Azure Portal を表示する Microsoft Edge ウィンドウに切 り替え、**splashscreen.contrast-white_scale-400.png** ブレードで **SAS の生成** タブに切り替 えます。 
+1. Azure Portal を表示する Microsoft Edge ウィンドウに切り替え、**splashscreen.contrast-white_scale-400.png** ブレードで **SAS の生成** タブに切り替 えます。 
 
-1. **SAS の生成** タブで **HTTP** オプションを有効に し、BLOB SAS トークンと対応する URL を生成します。
+1. **SAS の生成** タブで **HTTP** オプションを有効に し、BLOB SAS トークンおよび URL を生成します。
 
-1. 新しい Microsoft Edge ウィンドウを開き、前の手順で生成された URL に移動します。
+1. 新しい Microsoft Edge ウィンドウを開き、前の手順で生成された BLOB SAS URL に移動します。
 
-1. 画像を表示できることに注意してください。これは、URL に含まれる SAS トークンに基づいて BLOB にアクセスする権限が与えられたため、この時点で必要です。 
+1. 画像を表示できることを確認します。これは、URL に含まれる SAS トークンに基づいて BLOB にアクセスする権限が与えられたためです。
 
 1. イメージを表示する Microsoft Edge ウィンドウを閉じます。
 
 
 #### タスク 4: SAS トークンと保存されているアクセス ポリシーを使用して、Azure Storage アカウントのコンテンツにアクセスします。
 
-1. Azure Portal で、**ラボコンテナ** ブレードに移動します。
+1. Azure Portal で、**labcontainer ** ブレードに移動します。
 
-1. **ラボコンテナー** ブレードから、 **ラボコンテナ -アクセスポリシー** ブレードに移動します。
+1. **labcontainer ** ブレードから、 **labcontainer -アクセスポリシー** ブレードに移動します。
 
-1. 次の設定に新しいポリシーを追加する:
+1. 次の設定に新しいポリシーを追加します:
 
-    - 識別子: **ラボコンテナー読** み取り
+    - ID: **labcontainer-read**
 
     - アクセス許可: **読み取り**
 
     - 開始時刻: 現在の日付と時刻
 
     - 有効期限: 現在の日付と時刻 + 24 時間
+    
+1. **OK** をクリックしてポリシーを作成し、**保存** をクリックします
 
 1. Azure portal で、Microsoft Edge ウィンドウで、 **Cloud Shell** 内で **PowerShell** セッションを開始します。 
 
-1. **ストレージにマウントされたメッセージがない** というメッセージが表示された場合は、次の設定を使用し、ストレージを構成します。
+1. **ストレージがマウントされていない** というメッセージが表示された場合は、次の設定を使用し、ストレージを構成します。
 
     - サブシプション: ターゲット Azure サブスクリプションの名前
 
@@ -199,9 +201,9 @@ lab:
 
 #### タスク 5: アクセス ポリシーを変更することで、SAS トークンを無効にします。
 
-1. Azure Portal で、**ラボコンテナー - アクセス ポリシー** ブレードに移動します。
+1. Azure Portal で、**labcontainer - アクセス ポリシー** ブレードに移動します。
 
-1. 開始 時刻と有効期限を昨日の日付に設定し、**既存のポリシーラボコンテナー読み取りを編集します**。 
+1. 保存されているアクセス ポリシーを編集して 開始時刻と有効期限を過去の日付に設定し保存します
 
 1. Cloud Shell パネルを再度開きます。 
 
@@ -211,7 +213,7 @@ lab:
    Get-AzStorageBlob -Container 'labcontainer' -Blob 'splashscreen.contrast-white_scale-400.png' -Context $sasContext
 ```
 
-1. もうこれ以上BLOB にアクセスできないを確認します。
+1. BLOB にアクセスできないを確認します。
 
 
 > **結果**: このエクササイズを完了したら、BLOB コンテナーを作成し、そのコンテナーにファイルをアップロードし、SAS トークンと格納されたアクセス ポリシーを使用することでアクセス制御をテストしました。
