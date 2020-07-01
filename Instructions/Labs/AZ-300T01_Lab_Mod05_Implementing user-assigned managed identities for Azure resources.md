@@ -16,9 +16,9 @@ lab:
 
 このラボを終了すると、下記ができるようになります：
 
-- ユーザーが割り当てた管理　ID　の作成と構成
+- ユーザー割り当て済み ID　の作成と構成
 
-- ユーザーが割り当てた管理　ID　の機能の検証
+- ユーザー割り当て済み ID　の機能の検証
 
 ### ラボのセットアップ
 
@@ -28,17 +28,17 @@ lab:
 
 パスワード：**Pa55w.rd**
 
-## エクササイズ 1：ユーザーが割り当てた管理　ID　の作成と構成。
+## エクササイズ 1：ユーザー割り当て済み ID　の作成と構成。
 
 このエクササイズの主なタスクは次のとおりです：
 
 1. Windows Server 2016 データセンターを開き、Azure VM をデプロイします
 
-1. ユーザーが割り当てた管理 ID を作成します。
+1. ユーザー割り当て済み ID を作成します。
 
-1. ユーザーが割り当てた管理 ID を Azure VM に割り当てます。
+1. ユーザー割り当て済み ID を Azure VM に割り当てます。
 
-1. ユーザーが割り当てた管理 ID　へ　Grant RBAC　に基づくアクセス許可を付与します。
+1. ユーザー割り当て済み ID　へ　Grant RBAC　に基づくアクセス許可を付与します。
 
 #### タスク 1：Windows Server 2016 データセンターを開き、Azure VM をデプロイします
 
@@ -64,9 +64,9 @@ lab:
    az group create --resource-group az3000501-LabRG --location <Azure region>
 ```
 
-1. Cloud Shell　ペインから、Azure リソース マネージャー テンプレート **\\allfile\\AZ-300T01\\Module_05\\azuredeploy05.json** を主目次にアップロードします。
+1. Cloud Shell　ペインから、Azure リソース マネージャー テンプレート **\\allfile\\AZ-300T01\\Module_05\\azuredeploy05.json** をストレージにアップロードします。
 
-1. Cloud Shell　ペインから、パラメータ ファイル **\\allfile\\AZ-300T01\\Module_05\\azuredeploy05.parameters.json** を主目次にアップロードします。
+1. Cloud Shell　ペインから、パラメータ ファイル **\\allfile\\AZ-300T01\\Module_05\\azuredeploy05.parameters.json** をストレージにアップロードします。
 
 1. Cloud Shell　ペインから、下記を実行して、Windows Server 2016 データセンターをホストする Azure VM　を最初の仮想ネットワークにデプロイします：
 
@@ -76,21 +76,21 @@ lab:
 
    > **注意**：デプロイメントが完了するのを待ってください。これにはおよそ　5　分かかる場合があります。
 
-#### タスク 2：ユーザーが割り当てた管理　ID　を作成し、Azure VM　に割り当てます。
+#### タスク 2：ユーザー割り当て済みID　を作成し、Azure VM　に割り当てます。
 
-1. Cloud Shell　ペインから、次の操作を実行して、ユーザーが割り当てた管理 ID を作成します：
+1. Cloud Shell　ペインから、次の操作を実行して、ユーザー割り当て済み ID を作成します：
 
 ```
    az identity create --resource-group az3000501-LabRG --name az3000501-mi
 ```
 
-1. Cloud Shell　ペインから、次の操作を実行して、ユーザーが割り当てた管理　ID を Azure VM に割り当てます：
+1. Cloud Shell　ペインから、次の操作を実行して、ユーザー割り当て済み ID を Azure VM に割り当てます：
 
 ```
    az vm identity assign --resource-group az3000501-LabRG --name az3000501-vm --identities az3000501-mi
 ```
 
-#### タスク 3：ユーザーが割り当てた管理 ID　を参照する　RBAC　を構成します。
+#### タスク 3：ユーザー割り当て済み ID　を参照する　RBAC　を構成します。
 
 1. Cloud Shell　ペインから、下記を実行して、リソース グループを作成します (このエクササイズで Azure VM をデプロイした Azure リージョンの名前に`<Azure region>`プレースホルダを置き換えます)。
 
@@ -100,19 +100,19 @@ lab:
 
 1. Azure portal　で、**az3000502-LabRG - アクセス制御 (IAM)** ブレードに移動します。
 
-1. **az3000502-LabRG - アクセス制御 (IAM)** ブレードから、新しく作成されたユーザー割り当て管理 ID に所有者ロールを割り当てます。
+1. **az3000502-LabRG - アクセス制御 (IAM)** ブレードから、新しく作成されたユーザー割り当て済み ID に所有者ロールを割り当てます。
 
-> **結果**：このエクササイズを完了した後、ユーザーが割り当てた管理 ID を作成および構成しました。
+> **まとめ**：このエクササイズでは、ユーザー割り当て済み ID を作成および構成しました。
 
-## エクササイズ 2：ユーザーが割り当てた管理　ID　の機能の検証
+## エクササイズ 2：ユーザー割り当て済み ID　の機能の検証
 
 このエクササイズの主なタスクは次のとおりです：
 
-1. ユーザーが割り当てた管理　ID　を利用して、認証用の　Azure VM　を構成します。
+1. ユーザー割り当て済み ID　を利用して、認証用の　Azure VM　を構成します。
 
-1. Azure VM からユーザーが割り当てた管理　ID　の機能を検証します。
+1. Azure VM からユーザー割り当て済み ID　の機能を検証します。
 
-#### タスク 1：ユーザーが割り当てた管理　ID　を利用して、認証用の　Azure VM　を構成します。
+#### タスク 1：ユーザー割り当て済み ID　を利用して、認証用の　Azure VM　を構成します。
 
 1. Azure portal　で、**az3000501-vm** ブレードに移動します。
 
@@ -122,18 +122,19 @@ lab:
 
    - パスワード：**Pa55w.rd1234**
 
-1. リモート デスクトップ セッションを確立すると、**管理者** として表示されます。**C：\\Windows\\system32\\cmd.exe** window。PowerShell　セッションを開始するには、コマンド プロンプトに　`PowerShell`　を入力し、Enter キーを押します。
+1. リモート デスクトップ セッションを確立すると、**C：\\Windows\\system32\\cmd.exe** が**管理者**として実行されます。PowerShell　セッションを開始するには、コマンド プロンプトに　`PowerShell`　を入力し、Enter キーを押します。
 
 1. PowerShell　プロンプトから、次の操作を実行して、PowerShellGet モジュールの最新バージョンをインストールします (確認のプロンプトをしたら Enter キーを押します)。
 
 ```pwsh
-   Install-Module -Name PowerShellGet -Force
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+   Install-Module -Name PowerShellGet -Force -SkipPublisherCheck
 ```
 
-1. PowerShell　プロンプトから、次の操作を実行して、Az モジュールの最新バージョンをインストールします (**Y** を入力し、確認のプロンプトをしたら、Enter キーを押します)。
+1. PowerShell　プロンプトから、次の操作を実行して、Az モジュールの最新バージョンをインストールします (確認のプロンプトが表示されたら **Y** を入力し、Enter キーを押します)。
 
 ```pwsh
-   Install-Module -Name Az -AllowClobber
+   Install-Module -Name Az -AllowClobber -SkipPublisherCheck
 ```
 
 1. `exit`　を入力し、Enter キーを押し、現在のPowerShell　セッションを終了します；コマンド プロンプトに　`PowerShell`　を入力して、Enter キーを押して、もう一度開始します。
@@ -141,12 +142,13 @@ lab:
 1. PowerShell　プロンプトから、次の操作を実行して、AzureRM.ManagedServiceIdentity モジュールをインストールします：
 
 ```pwsh
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
    Install-Module -Name Az.ManagedServiceIdentity
 ```
 
 #### タスク 2：Azure VM からユーザーが割り当てた管理　ID　の機能を検証します。
 
-1. PowerShell　プロンプトから、次の操作を実行して、ユーザーが割り当てた管理　ID としてサインインします：
+1. PowerShell　プロンプトから、次の操作を実行して、ユーザー割り当て済み ID としてサインインします：
 
 ```pwsh
    Add-AzAccount -Identity
@@ -158,9 +160,9 @@ lab:
    (Get-AzVM -ResourceGroupName az3000501-LabRG -Name az3000501-vm).Identity
 ```
 
-1. エラー メッセージを注意します。メッセージが述べているように、現在のセキュリティ コンテキストは、ターゲット リソースに十分な承認を与えません。この問題を解決するには、Azure portal　に切り替 えて、**az3000501-LabRG - アクセス制御 (IAM)** ブレードに移動します。
+1. エラー メッセージに注目します。メッセージが述べているように、現在のセキュリティ コンテキストは、ターゲット リソースに十分な承認を与えません。この問題を解決するには、Azure portal　に切り替えて、**az3000501-LabRG - アクセス制御 (IAM)** ブレードに移動します。
 
-1. **az3000501-LabRG - Access Control (IAM)** ブレードから、ユーザーが割り当てた管理 ID **az3000501-mi**に共同作成者ロールを割り当てます。
+1. **az3000501-LabRG - Access Control (IAM)** ブレードから、ユーザー割り当て済み ID **az3000501-mi**に共同作成者ロールを割り当てます。
 
 1. リモート デスクトップ セッションに戻り、PowerShell　プロンプトから次の操作を実行して、現在使用されている管理　ID　の取得を試みます：
 
@@ -194,7 +196,7 @@ lab:
 
 1. コマンドが成功に完了したことを確認します。
 
-> **結果**：このエクササイズを完了した後、ユーザーが定義した管理　ID　の機能を検証しました。
+> **まとめ**：このエクササイズでは、ユーザーが定義した管理　ID　の機能を検証しました。
 
 ## エクササイズ 3：ラボ リソースの削除
 
@@ -220,4 +222,4 @@ lab:
 
 1. Portal　の下部にある **Cloud Shell** プロンプトを閉じます。
 
-> **結果**：このエクササイズでは、このラボで使用するリソースを削除しました。
+> **まとめ**：このエクササイズでは、このラボで使用するリソースを削除しました。
